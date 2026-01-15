@@ -322,8 +322,8 @@ export default function Navbar() {
                                                     onClick={handleGetBindingCode}
                                                     disabled={isGettingCode}
                                                     className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg border text-xs font-bold transition-all active:scale-95 ${isGettingCode
-                                                            ? "bg-gray-100 text-gray-400 border-gray-200 cursor-wait"
-                                                            : "bg-blue-500 text-white border-blue-600 shadow-sm shadow-blue-200 hover:bg-blue-600 hover:shadow-md"
+                                                        ? "bg-gray-100 text-gray-400 border-gray-200 cursor-wait"
+                                                        : "bg-blue-500 text-white border-blue-600 shadow-sm shadow-blue-200 hover:bg-blue-600 hover:shadow-md"
                                                         }`}
                                                 >
                                                     {isGettingCode ? <Loader2 size={12} className="animate-spin" /> : <Key size={12} />}
@@ -333,6 +333,30 @@ export default function Navbar() {
                                         )}
                                     </div>
                                 </div>
+
+                                {/* 菜单项：管理后台 (仅管理员可见) */}
+                                {user.isAdmin && (
+                                    <div className="p-2 pb-0">
+                                        <button
+                                            onClick={() => {
+                                                setIsMenuOpen(false);
+                                                window.location.href = `${process.env.NEXT_PUBLIC_ADMIN_URL || '/admin/dashboard'}`;
+                                            }}
+                                            className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-50 text-gray-700 hover:text-slate-800 transition-colors group"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className="p-2 bg-slate-100 text-slate-500 rounded-lg group-hover:bg-slate-800 group-hover:text-white transition-colors">
+                                                    <Lock size={18} />
+                                                </div>
+                                                <div className="flex flex-col items-start">
+                                                    <span className="font-bold text-sm">管理后台</span>
+                                                    <span className="text-[10px] text-gray-400 font-normal">系统与用户管理</span>
+                                                </div>
+                                            </div>
+                                            <span className="text-gray-300 group-hover:text-slate-400">→</span>
+                                        </button>
+                                    </div>
+                                )}
 
                                 {/* 菜单项：我的资源 */}
                                 <div className="p-2">
@@ -357,19 +381,19 @@ export default function Navbar() {
                                             router.push("/mysource");
                                         }}
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors group ${!isServerOnline
-                                                ? "bg-gray-50 text-gray-400 cursor-not-allowed opacity-70"
-                                                : user.isBound
-                                                    ? "hover:bg-blue-50 text-gray-700 hover:text-blue-600 cursor-pointer"
-                                                    : "bg-gray-50 text-gray-400 cursor-not-allowed opacity-80"
+                                            ? "bg-gray-50 text-gray-400 cursor-not-allowed opacity-70"
+                                            : user.isBound
+                                                ? "hover:bg-blue-50 text-gray-700 hover:text-blue-600 cursor-pointer"
+                                                : "bg-gray-50 text-gray-400 cursor-not-allowed opacity-80"
                                             }`}
                                     >
                                         <div className="flex items-center gap-3">
                                             {/* 图标容器 */}
                                             <div className={`p-2 rounded-lg transition-colors ${!isServerOnline
-                                                    ? "bg-gray-200 text-gray-400" // 离线样式
-                                                    : user.isBound
-                                                        ? "bg-blue-100 text-blue-500 group-hover:bg-blue-500 group-hover:text-white"
-                                                        : "bg-gray-200 text-gray-500"
+                                                ? "bg-gray-200 text-gray-400" // 离线样式
+                                                : user.isBound
+                                                    ? "bg-blue-100 text-blue-500 group-hover:bg-blue-500 group-hover:text-white"
+                                                    : "bg-gray-200 text-gray-500"
                                                 }`}>
                                                 {user.isBound && isServerOnline ? <Package size={18} /> : <Lock size={18} />}
                                             </div>

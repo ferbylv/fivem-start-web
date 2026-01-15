@@ -13,6 +13,7 @@ interface User {
     isBound: boolean;
     cash?: number; // 可选
     bank?: number; // 可选
+    isAdmin?: boolean; // 新增：是否为管理员
 }
 
 interface UserState {
