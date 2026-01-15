@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import Cookies from 'js-cookie';
+import { decryptData } from "@/utils/crypto";
 
 // 定义 User 类型 (确保包含 cash/bank 等你需要显示的字段)
 interface User {
@@ -70,11 +71,14 @@ export const useUserStore = create<UserState>((set, get) => ({
             const data = await res.json();
 
             if (data.success) {
+                // 解密后端返回的 data
+                const decryptedUser = decryptData(data.data);
+                console.log("解密后的用户信息:", decryptedUser);
                 // 更新 Zustand 状态
-                set({ user: data.data });
+                set({ user: decryptedUser });
                 // 同时更新 Cookie，保证刷新页面后也是最新的
-                Cookies.set('user_info', JSON.stringify(data.data), { expires: 7 });
-            }else{
+                Cookies.set('user_info', JSON.stringify(decryptedUser), { expires: 7 });
+            } else {
                 set({ user: null });
                 Cookies.remove('user_info');
                 Cookies.remove("auth_token");

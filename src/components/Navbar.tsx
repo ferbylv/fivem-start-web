@@ -49,7 +49,7 @@ export default function Navbar() {
         const checkServerStatus = async () => {
             try {
                 // 调用第一步写的 API
-                const res = await fetch('/api/game/status');
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/server/status`);
                 const data = await res.json();
 
                 // 更新全局 Store
@@ -193,7 +193,7 @@ export default function Navbar() {
                 toast((t) => (
                     <div className="flex flex-col gap-3 min-w-[240px] py-1">
                         <div className="flex items-center gap-2 text-gray-800 font-bold border-b border-gray-100 pb-2">
-                            <Key size={18} className="text-blue-500"/>
+                            <Key size={18} className="text-blue-500" />
                             <span>获取成功</span>
                         </div>
                         <div className="text-xs text-gray-500">请在游戏内输入以下绑定码：</div>
@@ -202,9 +202,9 @@ export default function Navbar() {
                             className="flex items-center justify-between bg-blue-50 px-3 py-2 rounded-lg border border-blue-100 group hover:border-blue-300 transition-colors cursor-pointer"
                             onClick={() => copyText(data.code)}
                         >
-              <span className="text-xl font-mono font-bold text-blue-600 tracking-widest select-all">
-                {data.code}
-              </span>
+                            <span className="text-xl font-mono font-bold text-blue-600 tracking-widest select-all">
+                                {data.code}
+                            </span>
                             <button
                                 onClick={(ev) => {
                                     ev.stopPropagation();
@@ -236,9 +236,8 @@ export default function Navbar() {
 
     const getLinkClass = (path: string) => {
         const isActive = pathname === path;
-        return `flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-bold text-sm md:text-base ${
-            isActive ? "bg-blue-50 text-blue-600 shadow-sm" : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-        }`;
+        return `flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-bold text-sm md:text-base ${isActive ? "bg-blue-50 text-blue-600 shadow-sm" : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            }`;
     };
 
     return (
@@ -250,8 +249,8 @@ export default function Navbar() {
                         <Sparkles size={20} />
                     </div>
                     <span className="text-2xl font-bold text-gray-800 tracking-tight hidden md:block">
-            Home Land
-          </span>
+                        Home Land
+                    </span>
                 </div>
 
                 <div className="flex items-center bg-gray-50/50 p-1 rounded-2xl border border-gray-100">
@@ -278,16 +277,15 @@ export default function Navbar() {
                         {/* 头像区域 */}
                         <div
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className={`flex items-center gap-2 pl-1 pr-1 md:pr-3 py-1 rounded-full border transition-all cursor-pointer select-none ${
-                                isMenuOpen ? "bg-white border-blue-200 ring-4 ring-blue-50 shadow-md" : "bg-white border-gray-200 hover:border-blue-300"
-                            }`}
+                            className={`flex items-center gap-2 pl-1 pr-1 md:pr-3 py-1 rounded-full border transition-all cursor-pointer select-none ${isMenuOpen ? "bg-white border-blue-200 ring-4 ring-blue-50 shadow-md" : "bg-white border-gray-200 hover:border-blue-300"
+                                }`}
                         >
                             <div className="w-9 h-9 rounded-full bg-gray-100 overflow-hidden flex items-center justify-center text-gray-400">
                                 <User size={20} />
                             </div>
                             <div className="hidden md:flex items-center gap-1 text-xs font-medium text-gray-600">
                                 <span>{maskPhone(user.phone)}</span>
-                                <ChevronDown size={14} className={`transition-transform duration-300 ${isMenuOpen ? "rotate-180" : ""}`}/>
+                                <ChevronDown size={14} className={`transition-transform duration-300 ${isMenuOpen ? "rotate-180" : ""}`} />
                             </div>
                         </div>
 
@@ -298,9 +296,9 @@ export default function Navbar() {
                     ${isServerOnline ? "bg-green-50 text-green-600" : "bg-red-50 text-red-500"}
                 `}>
                                     {isServerOnline ? (
-                                        <><Wifi size={10}/> 服务器在线 | {playerCount} 人游玩中</>
+                                        <><Wifi size={10} /> 服务器在线 | {playerCount} 人游玩中</>
                                     ) : (
-                                        <><WifiOff size={10}/> 服务器离线维护中</>
+                                        <><WifiOff size={10} /> 服务器离线维护中</>
                                     )}
                                 </div>
                                 {/* 顶部：用户信息与绑定状态 */}
@@ -323,13 +321,12 @@ export default function Navbar() {
                                                 <button
                                                     onClick={handleGetBindingCode}
                                                     disabled={isGettingCode}
-                                                    className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg border text-xs font-bold transition-all active:scale-95 ${
-                                                        isGettingCode
+                                                    className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg border text-xs font-bold transition-all active:scale-95 ${isGettingCode
                                                             ? "bg-gray-100 text-gray-400 border-gray-200 cursor-wait"
                                                             : "bg-blue-500 text-white border-blue-600 shadow-sm shadow-blue-200 hover:bg-blue-600 hover:shadow-md"
-                                                    }`}
+                                                        }`}
                                                 >
-                                                    {isGettingCode ? <Loader2 size={12} className="animate-spin"/> : <Key size={12} />}
+                                                    {isGettingCode ? <Loader2 size={12} className="animate-spin" /> : <Key size={12} />}
                                                     <span>{isGettingCode ? "获取中" : "获取绑定码"}</span>
                                                 </button>
                                             </div>
@@ -359,24 +356,22 @@ export default function Navbar() {
                                             setIsMenuOpen(false);
                                             router.push("/mysource");
                                         }}
-                                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors group ${
-                                            !isServerOnline
+                                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors group ${!isServerOnline
                                                 ? "bg-gray-50 text-gray-400 cursor-not-allowed opacity-70"
                                                 : user.isBound
                                                     ? "hover:bg-blue-50 text-gray-700 hover:text-blue-600 cursor-pointer"
                                                     : "bg-gray-50 text-gray-400 cursor-not-allowed opacity-80"
-                                        }`}
+                                            }`}
                                     >
                                         <div className="flex items-center gap-3">
                                             {/* 图标容器 */}
-                                            <div className={`p-2 rounded-lg transition-colors ${
-                                                !isServerOnline
+                                            <div className={`p-2 rounded-lg transition-colors ${!isServerOnline
                                                     ? "bg-gray-200 text-gray-400" // 离线样式
                                                     : user.isBound
                                                         ? "bg-blue-100 text-blue-500 group-hover:bg-blue-500 group-hover:text-white"
                                                         : "bg-gray-200 text-gray-500"
-                                            }`}>
-                                                {user.isBound && isServerOnline ? <Package size={18}/> : <Lock size={18}/>}
+                                                }`}>
+                                                {user.isBound && isServerOnline ? <Package size={18} /> : <Lock size={18} />}
                                             </div>
 
                                             <div className="flex flex-col items-start">
@@ -406,7 +401,7 @@ export default function Navbar() {
                                         >
                                             <div className="flex items-center gap-3">
                                                 <div className="p-2 bg-purple-100 text-purple-500 rounded-lg group-hover:bg-purple-500 group-hover:text-white transition-colors">
-                                                    <Download size={18}/>
+                                                    <Download size={18} />
                                                 </div>
                                                 <div className="flex flex-col items-start">
                                                     <span className="font-bold text-sm">安装到桌面</span>
@@ -424,7 +419,7 @@ export default function Navbar() {
                                         onClick={handleLogout}
                                         className="w-full flex items-center justify-center gap-2 text-xs text-gray-400 hover:text-red-500 py-2 transition-colors hover:bg-red-50 rounded-lg"
                                     >
-                                        <LogOut size={14}/> 退出登录
+                                        <LogOut size={14} /> 退出登录
                                     </button>
                                 </div>
 

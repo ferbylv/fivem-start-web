@@ -1,8 +1,8 @@
 "use client"; // 必须添加：因为我们要使用 useState 等交互功能
 
 import Image from "next/image";
-import { Smartphone, Lock, Check, KeyRound, ChevronRight,AlertCircle ,Wallet, CreditCard, Car, Package, Search, Filter, ArrowUpRight, Zap, Loader2} from "lucide-react";
-import { useState, useEffect,useRef } from "react";
+import { Smartphone, Lock, Check, KeyRound, ChevronRight, AlertCircle, Wallet, CreditCard, Car, Package, Search, Filter, ArrowUpRight, Zap, Loader2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation"; // 1. 引入路由钩子
 // 1. 引入工具
 import { encryptData } from "@/utils/crypto"; // 加密
@@ -25,7 +25,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false); // 加载状态
 
   const lastSendTimeRef = useRef<number>(0);
-// --- 2. 新增：错误信息状态对象 ---
+  // --- 2. 新增：错误信息状态对象 ---
   const [errors, setErrors] = useState({
     phone: "",
     slider: "",
@@ -48,7 +48,7 @@ export default function LoginPage() {
   }, [countdown]);
 
   // --- 处理发送验证码 ---
-  const handleSendCode = async() => {
+  const handleSendCode = async () => {
     // 3. ★★★ 防抖/节流逻辑开始 ★★★
     const now = Date.now();
     // 如果距离上次点击不足 2000 毫秒 (2秒)，直接拦截
@@ -57,7 +57,7 @@ export default function LoginPage() {
       return;
     }
     lastSendTimeRef.current = now;
-// 重置所有错误
+    // 重置所有错误
     setErrors({ phone: "", slider: "", code: "" });
 
     let hasError = false;
@@ -82,13 +82,17 @@ export default function LoginPage() {
     // 这里写发送验证码的后端接口逻辑
     console.log(`向手机号 ${phoneNumber} 发送验证码`);
     try {
+      const encrypted = encryptData({ phone: phoneNumber });
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/send-code`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         // 后端 SendCodeRequest 只需要 phone 字段
-        body: JSON.stringify({ phone: phoneNumber }),
+        // const rawPayload = { phone: phoneNumber };
+
+        // body: JSON.stringify({ phone: phoneNumber }),
+        body: JSON.stringify({ data: encrypted }),
       });
 
       const data = await res.json();
@@ -187,7 +191,7 @@ export default function LoginPage() {
         // toast.success("登录成功，正在跳转...");
 
         // 4. 存入 Zustand 全局状态
-        login(responseData.userInfo,responseData.token);
+        login(responseData.userInfo, responseData.token);
 
         setTimeout(() => {
           router.push("/home");
@@ -214,7 +218,7 @@ export default function LoginPage() {
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     startXRef.current = clientX;
   };
-// --- 辅助函数：清除指定字段的错误 ---
+  // --- 辅助函数：清除指定字段的错误 ---
   // 当用户开始输入时，应该把红字去掉
   const clearError = (field: "phone" | "slider" | "code") => {
     setErrors(prev => ({ ...prev, [field]: "" }));
@@ -278,205 +282,205 @@ export default function LoginPage() {
   }, [isDragging, dragX]);
 
   return (
-      // 背景色：使用了深邃的蓝紫色，比较有科技感
-      <div className="min-h-screen bg-[#4A55A2] flex items-center justify-center p-4 transition-colors duration-500">
-        <Toaster position="top-center" />
-        <div className="bg-white w-full max-w-4xl h-[600px] rounded-[40px] shadow-2xl flex overflow-hidden">
+    // 背景色：使用了深邃的蓝紫色，比较有科技感
+    <div className="min-h-screen bg-[#4A55A2] flex items-center justify-center p-4 transition-colors duration-500">
+      <Toaster position="top-center" />
+      <div className="bg-white w-full max-w-4xl h-[600px] rounded-[40px] shadow-2xl flex overflow-hidden">
 
-          {/* --- 左侧：插画区域 --- */}
-          <div className="relative w-1/2 hidden md:block">
-            <Image
-                src="/robot.png" // 确保你的 public 目录下有这张图
-                alt="Login Illustration"
-                fill
-                className="object-cover"
-                priority
-            />
-          </div>
+        {/* --- 左侧：插画区域 --- */}
+        <div className="relative w-1/2 hidden md:block">
+          <Image
+            src="/robot.png" // 确保你的 public 目录下有这张图
+            alt="Login Illustration"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
 
-          {/* --- 右侧：表单区域 --- */}
-          <div className="w-full md:w-1/2 bg-white p-8 md:p-12 flex flex-col justify-center">
+        {/* --- 右侧：表单区域 --- */}
+        <div className="w-full md:w-1/2 bg-white p-8 md:p-12 flex flex-col justify-center">
 
-            <div className="space-y-6 w-full max-w-sm mx-auto">
+          <div className="space-y-6 w-full max-w-sm mx-auto">
 
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">欢迎回来</h2>
-              <p className="text-gray-400 text-sm mb-4">请输入手机号和验证码登录</p>
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">欢迎回来</h2>
+            <p className="text-gray-400 text-sm mb-4">请输入手机号和验证码登录</p>
 
-              {/* 1. 手机号输入框 */}
-              <div className="relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors">
-                  <Smartphone size={20} />
-                </div>
-                <input
-                    type="tel"
-                    value={phoneNumber}
-                    maxLength={11}
-                    inputMode={"numeric"}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/\D/g, '');
-                      clearError("phone"); // 输入时清除错误
-                      setPhoneNumber(val)
-                    }}
-                    placeholder="请输入手机号"
-                    className={`w-full border-none rounded-2xl py-4 pl-12 pr-4 outline-none transition-all shadow-inner border
-                        ${errors.phone
-                        ? "bg-red-50 text-red-600 focus:ring-2 focus:ring-red-200 placeholder-red-300"
-                        : "bg-gray-100/80 text-gray-600 focus:ring-2 focus:ring-blue-300"
-                    }`}
-                />
+            {/* 1. 手机号输入框 */}
+            <div className="relative group">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors">
+                <Smartphone size={20} />
               </div>
-              {errors.phone && (
-                  <div className="flex items-center gap-1 mt-1 ml-2 text-red-500 text-xs animate-in slide-in-from-left-2 fade-in duration-300">
-                    <AlertCircle size={12} />
-                    <span>{errors.phone}</span>
-                  </div>
-              )}
+              <input
+                type="tel"
+                value={phoneNumber}
+                maxLength={11}
+                inputMode={"numeric"}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '');
+                  clearError("phone"); // 输入时清除错误
+                  setPhoneNumber(val)
+                }}
+                placeholder="请输入手机号"
+                className={`w-full border-none rounded-2xl py-4 pl-12 pr-4 outline-none transition-all shadow-inner border
+                        ${errors.phone
+                    ? "bg-red-50 text-red-600 focus:ring-2 focus:ring-red-200 placeholder-red-300"
+                    : "bg-gray-100/80 text-gray-600 focus:ring-2 focus:ring-blue-300"
+                  }`}
+              />
+            </div>
+            {errors.phone && (
+              <div className="flex items-center gap-1 mt-1 ml-2 text-red-500 text-xs animate-in slide-in-from-left-2 fade-in duration-300">
+                <AlertCircle size={12} />
+                <span>{errors.phone}</span>
+              </div>
+            )}
 
-              {/* 2. 滑动验证 (逻辑核心) */}
-              {/* 如果未验证：显示滑动条；如果已验证：显示绿色成功状态 */}
-              {/*<div*/}
-              {/*    onClick={handleSlideVerify}*/}
-              {/*    className={`relative w-full h-12 rounded-full flex items-center px-1 shadow-inner cursor-pointer transition-all duration-300 select-none overflow-hidden*/}
-              {/*  ${isVerified ? "bg-green-500" : "bg-gray-100/80 hover:bg-gray-200"}`}*/}
-              {/*>*/}
-              {/*  /!* 滑块/图标 *!/*/}
-              {/*  <div className={`h-10 w-10 rounded-full flex items-center justify-center shadow-md text-white transition-all duration-500 */}
-              {/*    ${isVerified ? "translate-x-[300px] opacity-0" : "bg-[#5DA9E9] translate-x-0"}`}>*/}
-              {/*    <ChevronRight size={20} />*/}
-              {/*  </div>*/}
+            {/* 2. 滑动验证 (逻辑核心) */}
+            {/* 如果未验证：显示滑动条；如果已验证：显示绿色成功状态 */}
+            {/*<div*/}
+            {/*    onClick={handleSlideVerify}*/}
+            {/*    className={`relative w-full h-12 rounded-full flex items-center px-1 shadow-inner cursor-pointer transition-all duration-300 select-none overflow-hidden*/}
+            {/*  ${isVerified ? "bg-green-500" : "bg-gray-100/80 hover:bg-gray-200"}`}*/}
+            {/*>*/}
+            {/*  /!* 滑块/图标 *!/*/}
+            {/*  <div className={`h-10 w-10 rounded-full flex items-center justify-center shadow-md text-white transition-all duration-500 */}
+            {/*    ${isVerified ? "translate-x-[300px] opacity-0" : "bg-[#5DA9E9] translate-x-0"}`}>*/}
+            {/*    <ChevronRight size={20} />*/}
+            {/*  </div>*/}
 
-              {/*  /!* 文字提示 *!/*/}
-              {/*  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">*/}
-              {/*    {isVerified ? (*/}
-              {/*        <div className="flex items-center gap-2 text-white font-bold animate-in fade-in zoom-in">*/}
-              {/*          <Check size={18} />*/}
-              {/*          <span>验证成功</span>*/}
-              {/*        </div>*/}
-              {/*    ) : (*/}
-              {/*        <span className="text-gray-400 text-sm">点击或滑动以验证身份</span>*/}
-              {/*    )}*/}
-              {/*  </div>*/}
-              {/*</div>*/}
-              {/* =========================================
+            {/*  /!* 文字提示 *!/*/}
+            {/*  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">*/}
+            {/*    {isVerified ? (*/}
+            {/*        <div className="flex items-center gap-2 text-white font-bold animate-in fade-in zoom-in">*/}
+            {/*          <Check size={18} />*/}
+            {/*          <span>验证成功</span>*/}
+            {/*        </div>*/}
+            {/*    ) : (*/}
+            {/*        <span className="text-gray-400 text-sm">点击或滑动以验证身份</span>*/}
+            {/*    )}*/}
+            {/*  </div>*/}
+            {/*</div>*/}
+            {/* =========================================
                 2. 滑动验证组件 (UI更新 + 绑定事件)
                ========================================= */}
-              <div
-                  ref={sliderRef}
-                  className={`relative w-full h-12 rounded-full flex items-center px-1 shadow-inner select-none overflow-hidden transition-all duration-300
+            <div
+              ref={sliderRef}
+              className={`relative w-full h-12 rounded-full flex items-center px-1 shadow-inner select-none overflow-hidden transition-all duration-300
                     ${isVerified ? "bg-green-500" : errors.slider ? "bg-red-50 ring-2 ring-red-100" : "bg-gray-100/80"}`}
-              >
-                {/* 绿色背景条：跟随滑块移动 */}
-                {!isVerified && (
-                    <div
-                        className="absolute left-0 top-0 bottom-0 bg-green-400 opacity-50 z-0"
-                        style={{ width: `${dragX + 20}px` }} // +20 是为了让颜色稍微超前一点，视觉更好
-                    />
-                )}
-
-                {/* 滑块 (Handle) */}
+            >
+              {/* 绿色背景条：跟随滑块移动 */}
+              {!isVerified && (
                 <div
-                    onMouseDown={handleDragStart}
-                    onTouchStart={handleDragStart}
-                    style={{ transform: `translateX(${dragX}px)` }}
-                    className={`relative z-10 h-10 w-10 rounded-full flex items-center justify-center shadow-md text-white cursor-pointer
+                  className="absolute left-0 top-0 bottom-0 bg-green-400 opacity-50 z-0"
+                  style={{ width: `${dragX + 20}px` }} // +20 是为了让颜色稍微超前一点，视觉更好
+                />
+              )}
+
+              {/* 滑块 (Handle) */}
+              <div
+                onMouseDown={handleDragStart}
+                onTouchStart={handleDragStart}
+                style={{ transform: `translateX(${dragX}px)` }}
+                className={`relative z-10 h-10 w-10 rounded-full flex items-center justify-center shadow-md text-white cursor-pointer
                   ${isVerified ? "bg-white text-green-500" : "bg-[#5DA9E9]"}
                   ${isDragging ? "" : "transition-transform duration-300"} 
                 `}
-                    // 上面这一行逻辑：拖拽时去掉 transition，松手回弹时加上 transition，保证手感顺滑
-                >
-                  {isVerified ? <Check size={20} /> : <ChevronRight size={20} />}
-                </div>
-
-                {/* 文字提示 */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-                  {isVerified ? (
-                      <div className="flex items-center gap-2 text-white font-bold animate-in fade-in zoom-in ml-8">
-                        <span>验证成功</span>
-                      </div>
-                  ) : (
-                      <span
-                          className={`text-sm transition-opacity ${errors.slider ? "text-red-400 font-medium" : "text-gray-400"}`}
-                          style={{ opacity: isDragging ? 0 : 1 - (dragX / 100) }}
-                      >
-                            {errors.slider ? "请拖动滑块完成验证" : "按住滑块拖动验证"}
-                      </span>
-                  )}
-                </div>
-              </div>
-              {/* 错误提示文字 - 滑块 */}
-              {errors.slider && (
-                  <div className="flex items-center gap-1 mt-1 ml-2 text-red-500 text-xs animate-in slide-in-from-left-2 fade-in duration-300">
-                    <AlertCircle size={12} />
-                    <span>{errors.slider}</span>
-                  </div>
-              )}
-              {/* 3. 验证码输入框 + 发送按钮 */}
-              <div className="relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors">
-                  <KeyRound size={20} />
-                </div>
-                <input
-                    type="text"
-                    value={verifyCode}
-                    inputMode={"numeric"}
-                    onChange={(e) => {
-                      // 使用正则：如果输入的内容包含非数字，直接替换为空
-                      const val = e.target.value.replace(/\D/g, '');
-                      clearError("code"); // 输入时清除错误
-                      setVerifyCode(val);
-                    }}
-                    placeholder="请输入验证码"
-                    maxLength={6}
-                    className={`w-full border-none rounded-2xl py-4 pl-12 pr-32 outline-none transition-all shadow-inner
-                        ${errors.code
-                        ? "bg-red-50 text-red-600 focus:ring-2 focus:ring-red-200 placeholder-red-300"
-                        : "bg-gray-100/80 text-gray-600 focus:ring-2 focus:ring-blue-300"
-                    }`}
-                />
-
-                {/* 发送验证码按钮 (绝对定位在输入框右侧) */}
-                <button
-                    onClick={handleSendCode}
-                    disabled={!isVerified || countdown > 0 || !phoneNumber}
-                    className={`absolute right-2 top-2 bottom-2 px-4 rounded-xl text-xs font-medium transition-all
-                  ${(!isVerified || !phoneNumber)
-                        ? "bg-gray-200 text-gray-400 cursor-not-allowed" // 禁用状态
-                        : countdown > 0
-                            ? "bg-gray-200 text-gray-500 cursor-wait"   // 倒计时状态
-                            : "bg-[#5DA9E9] text-white hover:bg-[#4B93D1] shadow-md active:scale-95" // 可点击状态
-                    }
-                `}
-                >
-                  {countdown > 0 ? `${countdown}s 后重新获取` : "发送验证码"}
-                </button>
-              </div>
-              {/* 错误提示文字 - 验证码 */}
-              {errors.code && (
-                  <div className="flex items-center gap-1 mt-1 ml-2 text-red-500 text-xs animate-in slide-in-from-left-2 fade-in duration-300">
-                    <AlertCircle size={12} />
-                    <span>{errors.code}</span>
-                  </div>
-              )}
-              {/* 登录按钮 */}
-              <button
-                  onClick={handleLogin}
-                  disabled={isLoading}
-                  className={`w-full text-white font-bold py-4 rounded-2xl shadow-[0_10px_20px_-5px_rgba(93,169,233,0.5)] transition-all transform mt-4 flex items-center justify-center gap-2
-                ${isLoading ? "bg-blue-300 cursor-wait" : "bg-[#5DA9E9] hover:bg-[#4B93D1] active:scale-95"}
-              `}
+              // 上面这一行逻辑：拖拽时去掉 transition，松手回弹时加上 transition，保证手感顺滑
               >
-                {isLoading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>登录中...</span>
-                    </>
+                {isVerified ? <Check size={20} /> : <ChevronRight size={20} />}
+              </div>
+
+              {/* 文字提示 */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+                {isVerified ? (
+                  <div className="flex items-center gap-2 text-white font-bold animate-in fade-in zoom-in ml-8">
+                    <span>验证成功</span>
+                  </div>
                 ) : (
-                    "登录 / 注册"
+                  <span
+                    className={`text-sm transition-opacity ${errors.slider ? "text-red-400 font-medium" : "text-gray-400"}`}
+                    style={{ opacity: isDragging ? 0 : 1 - (dragX / 100) }}
+                  >
+                    {errors.slider ? "请拖动滑块完成验证" : "按住滑块拖动验证"}
+                  </span>
                 )}
+              </div>
+            </div>
+            {/* 错误提示文字 - 滑块 */}
+            {errors.slider && (
+              <div className="flex items-center gap-1 mt-1 ml-2 text-red-500 text-xs animate-in slide-in-from-left-2 fade-in duration-300">
+                <AlertCircle size={12} />
+                <span>{errors.slider}</span>
+              </div>
+            )}
+            {/* 3. 验证码输入框 + 发送按钮 */}
+            <div className="relative group">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors">
+                <KeyRound size={20} />
+              </div>
+              <input
+                type="text"
+                value={verifyCode}
+                inputMode={"numeric"}
+                onChange={(e) => {
+                  // 使用正则：如果输入的内容包含非数字，直接替换为空
+                  const val = e.target.value.replace(/\D/g, '');
+                  clearError("code"); // 输入时清除错误
+                  setVerifyCode(val);
+                }}
+                placeholder="请输入验证码"
+                maxLength={6}
+                className={`w-full border-none rounded-2xl py-4 pl-12 pr-32 outline-none transition-all shadow-inner
+                        ${errors.code
+                    ? "bg-red-50 text-red-600 focus:ring-2 focus:ring-red-200 placeholder-red-300"
+                    : "bg-gray-100/80 text-gray-600 focus:ring-2 focus:ring-blue-300"
+                  }`}
+              />
+
+              {/* 发送验证码按钮 (绝对定位在输入框右侧) */}
+              <button
+                onClick={handleSendCode}
+                disabled={!isVerified || countdown > 0 || !phoneNumber}
+                className={`absolute right-2 top-2 bottom-2 px-4 rounded-xl text-xs font-medium transition-all
+                  ${(!isVerified || !phoneNumber)
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed" // 禁用状态
+                    : countdown > 0
+                      ? "bg-gray-200 text-gray-500 cursor-wait"   // 倒计时状态
+                      : "bg-[#5DA9E9] text-white hover:bg-[#4B93D1] shadow-md active:scale-95" // 可点击状态
+                  }
+                `}
+              >
+                {countdown > 0 ? `${countdown}s 后重新获取` : "发送验证码"}
               </button>
             </div>
+            {/* 错误提示文字 - 验证码 */}
+            {errors.code && (
+              <div className="flex items-center gap-1 mt-1 ml-2 text-red-500 text-xs animate-in slide-in-from-left-2 fade-in duration-300">
+                <AlertCircle size={12} />
+                <span>{errors.code}</span>
+              </div>
+            )}
+            {/* 登录按钮 */}
+            <button
+              onClick={handleLogin}
+              disabled={isLoading}
+              className={`w-full text-white font-bold py-4 rounded-2xl shadow-[0_10px_20px_-5px_rgba(93,169,233,0.5)] transition-all transform mt-4 flex items-center justify-center gap-2
+                ${isLoading ? "bg-blue-300 cursor-wait" : "bg-[#5DA9E9] hover:bg-[#4B93D1] active:scale-95"}
+              `}
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>登录中...</span>
+                </>
+              ) : (
+                "登录 / 注册"
+              )}
+            </button>
           </div>
         </div>
       </div>
+    </div>
   );
 }
