@@ -189,9 +189,9 @@ export default function LoginPage() {
       // 3. 处理响应
       if (responseData.success) {
         // toast.success("登录成功，正在跳转...");
-
+        responseData.userInfo.status == "banned" ? toast.error("账号被封禁") : login(responseData.userInfo, responseData.token);
         // 4. 存入 Zustand 全局状态
-        login(responseData.userInfo, responseData.token);
+
 
         setTimeout(() => {
           router.push("/home");

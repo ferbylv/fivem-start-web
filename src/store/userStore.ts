@@ -14,6 +14,8 @@ interface User {
     cash?: number; // 可选
     bank?: number; // 可选
     isAdmin?: boolean; // 新增：是否为管理员
+    isSuperAdmin?: boolean; // 新增：是否为超级管理员
+    permissions?: string[]; // 新增：管理员权限列表 ['store', 'users', 'banner', 'announcement']
 }
 
 interface UserState {

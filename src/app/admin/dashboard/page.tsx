@@ -20,7 +20,6 @@ import StoreManager from "@/components/admin/StoreManager";
 import AnnouncementManager from "@/components/admin/AnnouncementManager";
 import BannerManager from "@/components/admin/BannerManager";
 import UserManager from "@/components/admin/UserManager";
-
 import Cookies from "js-cookie";
 
 const Overview = () => {
@@ -75,7 +74,7 @@ const Overview = () => {
 
 export default function AdminDashboard() {
     const router = useRouter();
-    const { user, checkLogin } = useUserStore();
+    const { user, checkLogin, isServerOnline, setServerStatus, logout, refreshUser } = useUserStore();
     const [activeTab, setActiveTab] = useState("overview");
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -84,11 +83,41 @@ export default function AdminDashboard() {
         checkLogin();
     }, []);
 
+    // New: Poll Server Status
+    useEffect(() => {
+        const checkServerStatus = async () => {
+            try {
+                const token = Cookies.get("auth_token");
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/server/status`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+
+                const data = await res.json();
+                console.log(data);
+                if (data.code === 503) {
+                    console.log("Server is offline");
+                    logout();
+                    router.replace("/");
+                    return;
+                }
+                setServerStatus(data.online, data.playerCount || 0);
+                refreshUser();
+            } catch (error) {
+                setServerStatus(false, 0);
+            }
+        };
+
+        checkServerStatus();
+        const interval = setInterval(checkServerStatus, 30000);
+        return () => clearInterval(interval);
+    }, [setServerStatus]);
+
     // 2. Check Permissions (Run when user state changes)
     useEffect(() => {
         if (!user) return; // Wait for user to be loaded
 
-        if (user.isAdmin !== true) {
+        if (user.isAdmin !== true && user.isSuperAdmin !== true) {
             toast.error("您没有权限访问此页面");
             router.replace("/");
         }
@@ -96,7 +125,7 @@ export default function AdminDashboard() {
 
     // If not authorized or loading, you might want to show a loader or return null
     // But for better UX, we just let the effect redirect and show UI briefly or a loader
-    if (!user || !user.isAdmin) {
+    if (!user || (!user.isAdmin && !user.isSuperAdmin)) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
                 <p className="text-slate-400 animate-pulse">正在验证权限...</p>
@@ -104,14 +133,25 @@ export default function AdminDashboard() {
         );
     }
 
-    const menuItems = [
-        { id: "overview", label: "概览", icon: LayoutDashboard },
-        { id: "store", label: "商店管理", icon: ShoppingBag },
-        { id: "announcements", label: "公告管理", icon: Megaphone },
-        { id: "banners", label: "轮播图管理", icon: ImageIcon },
-        { id: "users", label: "用户管理", icon: Users },
-    ];
+    const hasPermission = (permission: string) => {
+        if (!user) return false;
+        if (user.isSuperAdmin) return true;
+        // 如果没有 permissions 数组但有 isAdmin 标记，默认给予 store, announcement, banner 权限？
+        // 或者严格按照 permissions 数组来？如果不传 permissions 数组，默认没有任何模块权限？
+        // 根据之前的设定，permissions 是可选的。
+        // 如果是 old admin (没有 permissions 字段)，可能需要默认逻辑。
+        // 但为了安全起见，如果没有 permissions 数组，我们默认他没有任何额外模块权限，或者只能看 Overview。
+        return user.permissions?.includes(permission);
+    };
 
+    const menuItems = [
+        { id: "overview", label: "概览", icon: LayoutDashboard, show: true },
+        { id: "store", label: "商店管理", icon: ShoppingBag, show: hasPermission("store") },
+        { id: "announcements", label: "公告管理", icon: Megaphone, show: hasPermission("announcement") },
+        { id: "banners", label: "轮播图管理", icon: ImageIcon, show: hasPermission("banner") },
+        { id: "users", label: "用户管理", icon: Users, show: hasPermission("users") },
+    ].filter(item => item.show);
+    console.log(menuItems);
     const renderContent = () => {
         switch (activeTab) {
             case "store": return <StoreManager />;
@@ -207,9 +247,14 @@ export default function AdminDashboard() {
                         </h2>
                     </div>
                     <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full border border-slate-200">
-                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                            <span className="text-xs font-bold text-slate-600">System Online</span>
+                        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-colors ${isServerOnline
+                            ? "bg-green-50 border-green-200 text-green-700"
+                            : "bg-slate-100 border-slate-200 text-slate-500"
+                            }`}>
+                            <div className={`w-2 h-2 rounded-full animate-pulse ${isServerOnline ? "bg-green-500" : "bg-slate-400"}`} />
+                            <span className="text-xs font-bold">
+                                {isServerOnline ? "System Online" : "System Offline"}
+                            </span>
                         </div>
                     </div>
                 </header>

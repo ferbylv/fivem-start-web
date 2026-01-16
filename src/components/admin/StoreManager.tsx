@@ -12,13 +12,13 @@ export default function StoreManager() {
     const [editingItem, setEditingItem] = useState<any>(null);
 
     // Form Stats
-    const [formData, setFormData] = useState({ name: "", price: "", description: "", image: "" });
+    const [formData, setFormData] = useState({ name: "", price: "", description: "", image: "", stock: 100, isActive: true });
 
     // 1. Fetch Items
     const fetchItems = async () => {
         try {
             const token = Cookies.get("auth_token");
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/store/items`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/store/products`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const json = await res.json();
@@ -40,11 +40,13 @@ export default function StoreManager() {
                 name: item.name,
                 price: item.price,
                 description: item.description,
-                image: item.image || ""
+                image: item.image || "",
+                stock: item.stock || 0,
+                isActive: item.isActive ?? true
             });
         } else {
             setEditingItem(null);
-            setFormData({ name: "", price: "", description: "", image: "" });
+            setFormData({ name: "", price: "", description: "", image: "", stock: 100, isActive: true });
         }
         setIsModalOpen(true);
     };
@@ -54,7 +56,7 @@ export default function StoreManager() {
 
         try {
             const token = Cookies.get("auth_token");
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/store/items/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/store/products/${id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -74,8 +76,8 @@ export default function StoreManager() {
         e.preventDefault();
         const token = Cookies.get("auth_token");
         const url = editingItem
-            ? `${process.env.NEXT_PUBLIC_API_URL}/admin/store/items/${editingItem.id}`
-            : `${process.env.NEXT_PUBLIC_API_URL}/admin/store/items`;
+            ? `${process.env.NEXT_PUBLIC_API_URL}/admin/store/products/${editingItem.id}`
+            : `${process.env.NEXT_PUBLIC_API_URL}/admin/store/products`;
         const method = editingItem ? "PUT" : "POST";
 
         try {
@@ -87,7 +89,8 @@ export default function StoreManager() {
                 },
                 body: JSON.stringify({
                     ...formData,
-                    price: Number(formData.price)
+                    price: Number(formData.price),
+                    stock: Number(formData.stock)
                 })
             });
             const json = await res.json();
@@ -143,7 +146,15 @@ export default function StoreManager() {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <h4 className="font-bold text-slate-800 truncate">{item.name}</h4>
-                                <p className="text-blue-600 font-bold text-sm">$ {item.price?.toLocaleString()}</p>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <p className="text-blue-600 font-bold text-sm">$ {item.price?.toLocaleString()}</p>
+                                    {item.isActive ? (
+                                        <span className="text-xs px-2 py-0.5 bg-green-100 text-green-600 rounded-full">上架</span>
+                                    ) : (
+                                        <span className="text-xs px-2 py-0.5 bg-red-100 text-red-600 rounded-full">下架</span>
+                                    )}
+                                </div>
+                                <p className="text-slate-500 text-xs mt-1">库存: {item.stock ?? 0}</p>
                                 <p className="text-slate-400 text-xs mt-1 line-clamp-2">{item.description}</p>
                             </div>
                         </div>
@@ -173,7 +184,7 @@ export default function StoreManager() {
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
                     <div className="relative bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl animate-in zoom-in-95 duration-200">
                         <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-xl font-bold">{editingItem ? "编辑商品" : "发布新商品"}</h3>
+                            <h3 className="text-xl font-bold">{editingItem ? "编辑商品信息" : "发布新商品"}</h3>
                             <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600"><X size={20} /></button>
                         </div>
 
@@ -208,11 +219,36 @@ export default function StoreManager() {
                                     placeholder="https://"
                                 />
                             </div>
+                            <div className="grid grid-cols-1 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">库存</label>
+                                    <input
+                                        required
+                                        type="number"
+                                        className="w-full px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all text-slate-800 placeholder:text-slate-400"
+                                        value={formData.stock}
+                                        onChange={e => setFormData({ ...formData, stock: Number(e.target.value) })}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <label className="flex items-center gap-2 cursor-pointer select-none">
+                                    <input
+                                        type="checkbox"
+                                        className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                        checked={formData.isActive}
+                                        onChange={e => setFormData({ ...formData, isActive: e.target.checked })}
+                                    />
+                                    <span className="text-sm font-medium text-slate-700">上架销售</span>
+                                </label>
+                            </div>
+
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-1">商品描述</label>
                                 <textarea
                                     rows={3}
-                                    className="w-full px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all resize-none"
+                                    className="w-full px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all resize-none text-slate-800 placeholder:text-slate-400"
                                     value={formData.description}
                                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                                 />

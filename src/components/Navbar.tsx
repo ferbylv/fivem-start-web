@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 import { useState, useRef, useEffect } from "react";
 import {
     Sparkles,
@@ -49,12 +50,22 @@ export default function Navbar() {
         const checkServerStatus = async () => {
             try {
                 // 调用第一步写的 API
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/server/status`);
-                const data = await res.json();
+                const token = Cookies.get("auth_token");
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/server/status`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
 
+
+
+                const data = await res.json();
+                if (data.code === 503) {
+                    logout();
+                    router.replace("/");
+                    return;
+                }
                 // 更新全局 Store
                 setServerStatus(data.online, data.playerCount);
-
+                refreshUser();
                 // 可选：如果离线了，打印个日志或者做个轻微提示
                 // if (!data.online) console.log("服务器离线中...");
 
@@ -335,7 +346,7 @@ export default function Navbar() {
                                 </div>
 
                                 {/* 菜单项：管理后台 (仅管理员可见) */}
-                                {user.isAdmin && (
+                                {(user.isAdmin || user.isSuperAdmin) && (
                                     <div className="p-2 pb-0">
                                         <button
                                             onClick={() => {
