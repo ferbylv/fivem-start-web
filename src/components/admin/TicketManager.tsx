@@ -85,25 +85,52 @@ export default function TicketManager() {
     };
 
     // Close Ticket
-    const handleCloseTicket = async () => {
-        if (!selectedTicketId || !confirm("确定要关闭此工单吗？")) return;
-        try {
-            const token = Cookies.get("auth_token");
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/tickets/${selectedTicketId}/close`, {
-                method: "POST",
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const json = await res.json();
-            if (json.success) {
-                toast.success("工单已关闭");
-                openTicket(selectedTicketId);
-                fetchTickets();
-            } else {
-                toast.error("操作失败");
-            }
-        } catch (err) {
-            toast.error("请求错误");
-        }
+    // Close Ticket
+    const handleCloseTicket = () => {
+        if (!selectedTicketId) return;
+
+        toast((t) => (
+            <div className="flex flex-col gap-2">
+                <span className="font-bold text-slate-800">确认要关闭此工单吗？</span>
+                <span className="text-xs text-slate-500">关闭后将无法继续回复</span>
+                <div className="flex gap-2 mt-2">
+                    <button
+                        onClick={async () => {
+                            toast.dismiss(t.id);
+                            try {
+                                const token = Cookies.get("auth_token");
+                                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/tickets/${selectedTicketId}/close`, {
+                                    method: "POST",
+                                    headers: { Authorization: `Bearer ${token}` }
+                                });
+                                const json = await res.json();
+                                if (json.success) {
+                                    toast.success("工单已关闭");
+                                    openTicket(selectedTicketId);
+                                    fetchTickets();
+                                } else {
+                                    toast.error("操作失败");
+                                }
+                            } catch (err) {
+                                toast.error("请求错误");
+                            }
+                        }}
+                        className="bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-600"
+                    >
+                        确认关闭
+                    </button>
+                    <button
+                        onClick={() => toast.dismiss(t.id)}
+                        className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-200"
+                    >
+                        取消
+                    </button>
+                </div>
+            </div>
+        ), {
+            duration: 5000,
+            position: "top-center"
+        });
     };
 
     return (
@@ -128,8 +155,8 @@ export default function TicketManager() {
                                     <div className="flex justify-between items-start mb-1">
                                         <h4 className={`font-medium text-sm line-clamp-1 ${selectedTicketId === t.id ? "text-blue-700" : "text-slate-800"}`}>{t.title}</h4>
                                         <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold whitespace-nowrap ${t.status === "open" ? "bg-green-100 text-green-600" :
-                                                t.status === "replied" ? "bg-amber-100 text-amber-600" :
-                                                    "bg-gray-100 text-slate-400"
+                                            t.status === "replied" ? "bg-amber-100 text-amber-600" :
+                                                "bg-gray-100 text-slate-400"
                                             }`}>
                                             {t.status === "open" ? "待处理" : t.status === "replied" ? "已回复" : "已关闭"}
                                         </span>
@@ -185,8 +212,8 @@ export default function TicketManager() {
                                                 <span className="text-[10px] text-slate-300">{msg.time}</span>
                                             </div>
                                             <div className={`rounded-2xl p-4 shadow-sm text-sm leading-relaxed whitespace-pre-wrap ${msg.sender === "admin"
-                                                    ? "bg-blue-600 text-white rounded-tr-none"
-                                                    : "bg-white border border-slate-100 text-slate-700 rounded-tl-none"
+                                                ? "bg-blue-600 text-white rounded-tr-none"
+                                                : "bg-white border border-slate-100 text-slate-700 rounded-tl-none"
                                                 }`}>
                                                 {msg.content}
                                             </div>

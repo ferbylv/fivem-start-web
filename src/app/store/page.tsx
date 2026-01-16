@@ -4,41 +4,76 @@ import Navbar from "@/components/Navbar";
 import { ShoppingCart, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 
 export default function StorePage() {
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [processingId, setProcessingId] = useState<number | null>(null);
+
+    const fetchProducts = async () => {
+        try {
+            // Assuming public endpoint doesn't need auth token, or it uses same as admin if publicly accessible
+            // Usually store is public.
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/store/products`);
+            const json = await res.json();
+            if (json.success) {
+                setProducts(json.data);
+            } else {
+                toast.error("加载商品失败");
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("无法连接到商店服务器");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                // Assuming public endpoint doesn't need auth token, or it uses same as admin if publicly accessible
-                // Usually store is public.
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/store/products`);
-                const json = await res.json();
-                if (json.success) {
-                    setProducts(json.data);
-                } else {
-                    toast.error("加载商品失败");
-                }
-            } catch (err) {
-                console.error(err);
-                toast.error("无法连接到商店服务器");
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchProducts();
     }, []);
 
-    const handleBuy = (product: any) => {
+    const handleBuy = async (product: any) => {
         if (product.stock <= 0) {
             toast.error("库存不足");
             return;
         }
-        // Placeholder for purchase logic
-        toast.success(`即将购买: ${product.name}`);
+        setProcessingId(product.id);
+
+        try {
+            const token = Cookies.get("auth_token");
+            if (!token) {
+                toast.error("请先登录");
+                return;
+            }
+
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment/alipay/create`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    type: "product",
+                    productId: product.id,
+                    quantity: 1
+                })
+            });
+            const json = await res.json();
+
+            if (json.success && json.data.payUrl) {
+                toast.loading("正在跳转支付宝...");
+                window.location.href = json.data.payUrl;
+            } else {
+                toast.error(json.message || "创建订单失败");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("支付请求失败");
+        } finally {
+            setProcessingId(null);
+        }
     };
 
     return (
@@ -84,12 +119,13 @@ export default function StorePage() {
                                     </div>
                                     <button
                                         onClick={() => handleBuy(item)}
-                                        disabled={item.stock <= 0}
-                                        className={`w-full py-2 rounded-lg text-sm font-bold transition-colors ${item.stock > 0
+                                        disabled={item.stock <= 0 || processingId === item.id}
+                                        className={`w-full py-2 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-1 ${item.stock > 0
                                             ? "bg-blue-500 text-white hover:bg-blue-600"
                                             : "bg-gray-200 text-gray-400 cursor-not-allowed"
                                             }`}
                                     >
+                                        {processingId === item.id && <Loader2 size={14} className="animate-spin" />}
                                         {item.stock > 0 ? "购买" : "缺货"}
                                     </button>
                                 </div>

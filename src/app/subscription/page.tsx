@@ -78,26 +78,25 @@ export default function SubscriptionPage() {
         setSubscribing(planId);
         try {
             const token = Cookies.get("auth_token");
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subscription/subscribe`, {
+            // Call Payment Create API
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment/alipay/create`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify({ planId })
+                body: JSON.stringify({
+                    type: "subscription",
+                    planId
+                })
             });
             const json = await res.json();
-            if (json.success) {
-                toast.success("订阅成功！");
-                // Refresh my subscription
-                setMySub({
-                    isActive: true,
-                    planName: plans.find(p => p.id === planId)?.name,
-                    expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // Mock update
-                });
-                // Ideally trigger a detailed refresh from server
+
+            if (json.success && json.data.payUrl) {
+                toast.loading("正在跳转支付宝...");
+                window.location.href = json.data.payUrl;
             } else {
-                toast.error(json.message || "订阅失败");
+                toast.error(json.message || "创建订单失败");
             }
         } catch (error) {
             toast.error("请求错误");

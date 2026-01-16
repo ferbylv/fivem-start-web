@@ -196,7 +196,7 @@ export default function AdminDashboard() {
                         <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">
                             <LayoutDashboard size={18} />
                         </div>
-                        <span className="font-bold text-slate-800 text-lg">More Admin</span>
+                        <span className="font-bold text-slate-800 text-lg">HomeLand Admin</span>
                     </div>
                     <button
                         className="md:hidden p-1 text-slate-400 hover:text-slate-600"

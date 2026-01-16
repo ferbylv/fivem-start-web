@@ -217,6 +217,8 @@ export default function UserManager() {
                                 <th className="px-6 py-4">用户信息</th>
                                 <th className="px-6 py-4">权限</th>
                                 <th className="px-6 py-4">状态</th>
+                                <th className="px-6 py-4">当前订阅</th>
+                                <th className="px-6 py-4">总消费</th>
                                 <th className="px-6 py-4">注册时间</th>
                                 <th className="px-6 py-4 text-right">操作</th>
                             </tr>
@@ -254,6 +256,21 @@ export default function UserManager() {
                                                 <Ban size={10} /> 封禁
                                             </span>
                                         )}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {u.subscription ? (
+                                            <span className="inline-flex items-center px-2 py-1 bg-blue-50 text-blue-600 rounded text-xs font-bold ring-1 ring-blue-100">
+                                                {u.subscription}
+                                            </span>
+                                        ) : (
+                                            <span className="text-slate-400 text-xs">-</span>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className="font-mono font-medium text-slate-700">
+                                            {u.totalSpend?.toLocaleString() || 0}
+                                        </span>
+                                        <span className="text-xs text-slate-400 ml-1">金币</span>
                                     </td>
                                     <td className="px-6 py-4 text-slate-500">{u.joinDate}</td>
                                     <td className="px-6 py-4 text-right">
