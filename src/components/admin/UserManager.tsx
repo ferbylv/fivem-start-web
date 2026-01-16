@@ -21,6 +21,9 @@ export default function UserManager() {
         { key: "announcement", label: "公告管理" },
         { key: "banner", label: "轮播图管理" },
         { key: "users", label: "用户管理" },
+        { key: "subscription", label: "订阅管理" },
+        { key: "ticket", label: "工单管理" },
+        { key: "order", label: "订单管理" },
     ];
 
     const openPermissionModal = (user: any) => {

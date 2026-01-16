@@ -65,16 +65,19 @@ export default function StorePage() {
                                         </div>
                                     )}
 
-                                    <div className="aspect-square bg-white rounded-xl flex items-center justify-center text-gray-300 relative overflow-hidden">
+                                    <div className="aspect-square bg-white rounded-xl flex items-center justify-center text-gray-300 relative overflow-hidden p-2">
                                         {item.image ? (
-                                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                            <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
                                         ) : (
                                             <ShoppingCart size={40} />
                                         )}
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-gray-700 truncate">{item.name}</h3>
-                                        <div className="flex items-center justify-between mt-1">
+                                        {item.description && (
+                                            <p className="text-xs text-gray-400 mt-1 line-clamp-2 min-h-[2.5em]">{item.description}</p>
+                                        )}
+                                        <div className="flex items-center justify-between mt-2">
                                             <p className="text-blue-500 font-bold text-sm">{item.price?.toLocaleString()} 金币</p>
                                             <p className="text-xs text-slate-400">库存: {item.stock}</p>
                                         </div>

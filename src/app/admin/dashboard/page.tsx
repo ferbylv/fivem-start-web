@@ -12,14 +12,20 @@ import {
     LogOut,
     Menu,
     X,
-    ChevronRight
+    ChevronRight,
+    Crown,
+    MessageSquare,
+    FileText
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 import StoreManager from "@/components/admin/StoreManager";
 import AnnouncementManager from "@/components/admin/AnnouncementManager";
 import BannerManager from "@/components/admin/BannerManager";
+import SubscriptionManager from "@/components/admin/SubscriptionManager";
+import TicketManager from "@/components/admin/TicketManager";
 import UserManager from "@/components/admin/UserManager";
+import OrderManager from "@/components/admin/OrderManager";
 import Cookies from "js-cookie";
 
 const Overview = () => {
@@ -147,17 +153,23 @@ export default function AdminDashboard() {
     const menuItems = [
         { id: "overview", label: "概览", icon: LayoutDashboard, show: true },
         { id: "store", label: "商店管理", icon: ShoppingBag, show: hasPermission("store") },
+        { id: "orders", label: "订单管理", icon: FileText, show: hasPermission("order") }, // New
         { id: "announcements", label: "公告管理", icon: Megaphone, show: hasPermission("announcement") },
         { id: "banners", label: "轮播图管理", icon: ImageIcon, show: hasPermission("banner") },
         { id: "users", label: "用户管理", icon: Users, show: hasPermission("users") },
+        { id: "subscription", label: "订阅管理", icon: Crown, show: hasPermission("subscription") },
+        { id: "tickets", label: "工单管理", icon: MessageSquare, show: hasPermission("ticket") },
     ].filter(item => item.show);
     console.log(menuItems);
     const renderContent = () => {
         switch (activeTab) {
             case "store": return <StoreManager />;
+            case "orders": return <OrderManager />; // New
             case "announcements": return <AnnouncementManager />;
             case "banners": return <BannerManager />;
             case "users": return <UserManager />;
+            case "subscription": return <SubscriptionManager />;
+            case "tickets": return <TicketManager />;
             default: return <Overview />;
         }
     };

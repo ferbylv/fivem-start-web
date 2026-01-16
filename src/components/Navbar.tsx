@@ -20,8 +20,13 @@ import {
     Lock,
     Download,
     Wifi,
-    WifiOff // 新增图标用于显示在线状态
+    WifiOff,
+    Crown, // New
+    MessageSquare // New
 } from "lucide-react";
+// ... imports ...
+
+
 import toast from "react-hot-toast";
 import { useUserStore } from "@/store/userStore";
 
@@ -270,6 +275,12 @@ export default function Navbar() {
                     </Link>
                     <Link href="/store" className={getLinkClass("/store")}>
                         <ShoppingBag size={18} /><span>商店</span>
+                    </Link>
+                    <Link href="/subscription" className={getLinkClass("/subscription")}>
+                        <Crown size={18} /><span>订阅</span>
+                    </Link>
+                    <Link href="/ticket" className={getLinkClass("/ticket")}>
+                        <MessageSquare size={18} /><span>工单</span>
                     </Link>
                 </div>
             </div>

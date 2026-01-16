@@ -138,8 +138,8 @@ export default function BannerManager() {
                             <div className="text-slate-300 cursor-move hover:text-slate-500"><GripVertical size={20} /></div>
 
                             {/* Preview Image */}
-                            <div className="w-full md:w-48 aspect-video bg-slate-100 rounded-lg overflow-hidden relative shrink-0">
-                                <img src={banner.src} alt={banner.title} className="w-full h-full object-cover"
+                            <div className="w-full md:w-48 aspect-video bg-slate-50 rounded-lg overflow-hidden relative shrink-0 border border-slate-100">
+                                <img src={banner.src} alt={banner.title} className="w-full h-full object-contain"
                                     onError={(e) => (e.target as HTMLImageElement).src = 'https://placehold.co/600x400?text=Error'}
                                 />
                             </div>
