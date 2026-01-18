@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/store/userStore.ts
+
 
 import { create } from 'zustand';
 import Cookies from 'js-cookie';
@@ -43,7 +45,11 @@ export const useUserStore = create<UserState>((set, get) => ({
         console.log("userData", userData);
         // Encrypt data before saving to cookie, so checkLogin can decrypt it correctly
         // const encryptedUser = encryptData(userData);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         Cookies.set('user_info', userData, { expires: 7 });
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         set({ user: decryptData(userData) });
     },
 

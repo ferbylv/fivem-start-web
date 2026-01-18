@@ -29,7 +29,8 @@ import {
 
 import toast from "react-hot-toast";
 import { useUserStore } from "@/store/userStore";
-import {encryptData} from "@/utils/crypto";
+import { encryptData } from "@/utils/crypto";
+import { siteConfig } from "@/config/site";
 
 // 定义 PWA 安装事件的类型接口 (解决 TS 报错)
 interface BeforeInstallPromptEvent extends Event {
@@ -195,8 +196,8 @@ export default function Navbar() {
 
         try {
             // 注意：这里使用了 fallback 或者是你环境变量里的 API
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://192.168.1.5:8000/api";
-            const encrypted=encryptData({ userId: user.userId })
+            const apiUrl = siteConfig.api.baseUrl;
+            const encrypted = encryptData({ userId: user.userId })
             const res = await fetch(`${apiUrl}/bind/get-code`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -264,7 +265,7 @@ export default function Navbar() {
                         <Sparkles size={20} />
                     </div>
                     <span className="text-2xl font-bold text-gray-800 tracking-tight hidden md:block">
-                        Home Land
+                        {siteConfig.name}
                     </span>
                 </div>
 
@@ -361,7 +362,7 @@ export default function Navbar() {
                                         <button
                                             onClick={() => {
                                                 setIsMenuOpen(false);
-                                                window.location.href = `${process.env.NEXT_PUBLIC_ADMIN_URL || '/admin/dashboard'}`;
+                                                window.location.href = siteConfig.api.adminUrl;
                                             }}
                                             className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-50 text-gray-700 hover:text-slate-800 transition-colors group"
                                         >

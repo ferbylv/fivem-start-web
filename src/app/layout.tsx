@@ -15,9 +15,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+import { siteConfig } from "@/config/site";
+
 export const metadata: Metadata = {
-    title: 'Home Land 社区助手',
-    manifest: '/manifest.json', // 引用 manifest
+  title: `${siteConfig.name} 社区助手`,
+  manifest: '/manifest.json', // 引用 manifest
 };
 
 export default function RootLayout({

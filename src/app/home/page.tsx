@@ -24,6 +24,7 @@ import { toast, Toaster } from "react-hot-toast";
 import { useUserStore } from "@/store/userStore";
 import { encryptData } from "@/utils/crypto";
 import SocialSidebar from "@/components/SocialSidebar";
+import { siteConfig } from "@/config/site";
 // --- 1. 定义轮播图数据 ---
 
 
@@ -90,7 +91,7 @@ export default function HomePage() {
     // --- 处理跳转下载/官网 ---
     const handleGoToDownload = () => {
         // 这里填入 FiveM 官网或你的下载地址
-        window.open("https://fivem.net/", "_blank");
+        window.open(siteConfig.links.fivemDownload, "_blank");
         setShowModal(false); // 点击后关闭弹窗
     };
     const handleStart = async () => {
@@ -115,12 +116,12 @@ export default function HomePage() {
 
             // 3. 无论后台成功与否，都尝试拉起游戏 (用户体验优先)
             // 替换你的服务器连接地址
-            window.location.href = `${process.env.NEXT_PUBLIC_FIVEM_SERVER}`;
+            window.location.href = siteConfig.game.serverUrl;
 
         } catch (e) {
             console.error("预授权失败", e);
             // 降级处理：直接拉起游戏
-            window.location.href = `${process.env.NEXT_PUBLIC_FIVEM_SERVER}`;
+            window.location.href = siteConfig.game.serverUrl;
         }
     };
     // 2. 定义模态框显示

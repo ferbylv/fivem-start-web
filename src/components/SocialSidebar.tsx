@@ -4,18 +4,16 @@ import { useState } from "react";
 import { MessageCircle, Gamepad2, Copy, Check, ExternalLink } from "lucide-react";
 import toast from "react-hot-toast";
 
+import { siteConfig } from "@/config/site";
+
 export default function SocialSidebar() {
     const [qqHovered, setQqHovered] = useState(false);
     const [kookHovered, setKookHovered] = useState(false);
     const [copied, setCopied] = useState(false);
 
-    // TODO: Replace with your actual values
-    const QQ_GROUP_ID = "12345678";
-    // QQ Join Link (Find this in Group Settings -> Share -> Copy Link)
-    // Format usually: https://qm.qq.com/cgi-bin/qm/qr?k=...
-    const QQ_LINK = "https://qun.qq.com/universal-share/share?ac=1&authKey=nvXhEH9tRp%2FUv62sCh3wRJl2st%2BpfEDClvn74m9ehcAMdvHd67%2Bx%2FChFweAQpeQp&busi_data=eyJncm91cENvZGUiOiI5NTIwODgyMzIiLCJ0b2tlbiI6ImdvSVdzcC9McnVveFY0YXBoSkk0OUVSUkJ1dHI4UlluMEg1eDEwVzh3OHluVFFCU1RNTDBFV0Y5Z2wrZGlaejAiLCJ1aW4iOiIxNTQ5NDI0MTkyIn0%3D&data=xW5PSMoCaFTqEt9j9u9HDmxR6FhBZn258c8vytqm3Lbq_5M5xfsxdO1NcHKhCcdxMRzEJ7r99Tor3-0kwbrBiw&svctype=4&tempid=h5_group_info";
-    // KOOK Invite Link (Permanent link ensures it doesn't expire)
-    const KOOK_LINK = "https://kook.vip/isBnUx";
+    const QQ_GROUP_ID = siteConfig.social.qq.groupId;
+    const QQ_LINK = siteConfig.social.qq.link;
+    const KOOK_LINK = siteConfig.social.kook.link;
 
     const handleCopyQQ = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent triggering the main click
