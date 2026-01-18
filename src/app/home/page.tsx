@@ -23,6 +23,7 @@ import Navbar from "@/components/Navbar";
 import { toast, Toaster } from "react-hot-toast";
 import { useUserStore } from "@/store/userStore";
 import { encryptData } from "@/utils/crypto";
+import SocialSidebar from "@/components/SocialSidebar";
 // --- 1. 定义轮播图数据 ---
 
 
@@ -130,6 +131,7 @@ export default function HomePage() {
         <div className="min-h-screen bg-white text-gray-800">
             <BookmarkHint />
             <Toaster position="top-center" />
+            <SocialSidebar />
             {/* 添加全局样式用于跑马灯动画 */}
             <style jsx global>{`
         @keyframes marquee {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { Loader2, Search, Filter, ChevronLeft, ChevronRight, FileText, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { Loader2, Search, Filter, ChevronLeft, ChevronRight, FileText, CheckCircle2, XCircle, Clock, ShoppingBag, Crown, PackageCheck, Package, PackageX } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface Order {
@@ -13,6 +13,7 @@ interface Order {
     itemName: string;
     amount: number;
     status: "completed" | "pending" | "failed";
+    isDelivered?: boolean; // New field
     createdAt: string;
 }
 
@@ -128,19 +129,20 @@ export default function OrderManager() {
                                 <th className="p-4 font-bold">商品 / 类型</th>
                                 <th className="p-4 font-bold">金额</th>
                                 <th className="p-4 font-bold">状态</th>
+                                <th className="p-4 font-bold">发货</th>
                                 <th className="p-4 font-bold">时间</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={6} className="p-12 text-center">
+                                    <td colSpan={7} className="p-12 text-center">
                                         <Loader2 className="animate-spin text-slate-300 mx-auto" size={32} />
                                     </td>
                                 </tr>
                             ) : orders.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="p-12 text-center text-slate-400">
+                                    <td colSpan={7} className="p-12 text-center text-slate-400">
                                         暂无订单记录
                                     </td>
                                 </tr>
@@ -172,6 +174,24 @@ export default function OrderManager() {
                                                 {order.status === 'failed' && <XCircle size={12} />}
                                                 {getStatusText(order.status)}
                                             </span>
+                                        </td>
+                                        <td className="p-4">
+                                            {/* Delivery Status */}
+                                            {order.status === 'completed' ? (
+                                                order.isDelivered ? (
+                                                    <span className="inline-flex items-center gap-1 text-green-600 text-xs font-medium bg-green-50 px-2 py-1 rounded-md">
+                                                        <PackageCheck size={14} />
+                                                        已发货
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1 text-slate-400 text-xs font-medium bg-slate-50 px-2 py-1 rounded-md">
+                                                        <Package size={14} />
+                                                        未发货
+                                                    </span>
+                                                )
+                                            ) : (
+                                                <span className="text-slate-300">-</span>
+                                            )}
                                         </td>
                                         <td className="p-4 text-sm text-slate-500">
                                             {order.createdAt}
@@ -209,7 +229,3 @@ export default function OrderManager() {
         </div>
     );
 }
-
-// Icons import fix (Crown and ShoppingBag were used but not imported in the component code above)
-// Let's fix imports in the file logic.
-import { ShoppingBag, Crown } from "lucide-react";

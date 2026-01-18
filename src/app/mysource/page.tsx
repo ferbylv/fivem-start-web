@@ -108,6 +108,7 @@ export default function MySourcePage() {
                 console.log(json);
                 if (json.success) {
                     const decryptedData = decryptData(json.data);
+                    console.log(decryptedData);
                     setAssets(decryptedData);
                     toast.success("资产同步成功");
                 } else {
@@ -300,7 +301,7 @@ export default function MySourcePage() {
                                         </div>
 
                                         {/* 车名 */}
-                                        <div className="flex items-center justify-between mb-1.5">
+                                        <div className="flex items-center justify-between mb-1.5 ml-1.5">
                                             <h3 className="font-bold text-gray-700 text-xs truncate" title={v.vehicle}>
                                                 {v.vehicle}
                                             </h3>
@@ -313,11 +314,11 @@ export default function MySourcePage() {
                                                 {v.plate}
                                             </span>
 
-                                            {/* 状态显示 */}
-                                            <span className={`text-[10px] font-medium ${v.state > 80 ? "text-green-500" : v.state > 50 ? "text-yellow-500" : "text-red-500"
-                                                }`}>
-                                                {v.state}%
-                                            </span>
+                                            {/*/!* 状态显示 *!/*/}
+                                            {/*<span className={`text-[10px] font-medium ${v.state > 80 ? "text-green-500" : v.state > 50 ? "text-yellow-500" : "text-red-500"*/}
+                                            {/*    }`}>*/}
+                                            {/*    {v.state}%*/}
+                                            {/*</span>*/}
                                         </div>
                                     </div>
                                 ))}

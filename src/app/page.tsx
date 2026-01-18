@@ -5,10 +5,9 @@ import { Smartphone, Lock, Check, KeyRound, ChevronRight, AlertCircle, Wallet, C
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation"; // 1. 引入路由钩子
 // 1. 引入工具
-import { encryptData } from "@/utils/crypto"; // 加密
 import { useUserStore } from "@/store/userStore"; // 状态
 import { toast, Toaster } from "react-hot-toast";
-
+import { decryptData, encryptData } from "@/utils/crypto";
 // === 模拟模式开关 ===
 // 设置为 false 时，会真正去请求后端接口
 // 设置为 true 时，会模拟成功并返回假数据 (方便你现在测试)
@@ -189,7 +188,7 @@ export default function LoginPage() {
       // 3. 处理响应
       if (responseData.success) {
         // toast.success("登录成功，正在跳转...");
-        responseData.userInfo.status == "banned" ? toast.error("账号被封禁") : login(responseData.userInfo, responseData.token);
+        decryptData(responseData.userInfo).status == "banned" ? toast.error("账号被封禁") : login(responseData.userInfo, responseData.token);
         // 4. 存入 Zustand 全局状态
 
 

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { MessageSquare, Plus, Clock, CheckCircle2, XCircle, Search, ChevronLeft, Send, Loader2 } from "lucide-react";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useUserStore } from "@/store/userStore";
 
 import Navbar from "@/components/Navbar";
@@ -70,6 +70,10 @@ export default function TicketPage() {
 
     // Create Ticket
     const handleCreateTicket = async () => {
+        if (user && !user.isBound) {
+            toast.error("请先绑定服务器角色后提交工单");
+            return;
+        }
         if (!newTicket.title || !newTicket.content) return toast.error("请填写完整信息");
         setCreating(true);
         try {
@@ -164,7 +168,7 @@ export default function TicketPage() {
         <div className="min-h-screen bg-white text-gray-800">
             <div className="w-full max-w-screen-xl mx-auto px-4 py-6 md:px-8 flex flex-col gap-6">
                 <Navbar />
-
+                <Toaster position="top-center" />
                 {/* Header Section */}
                 <div className="flex items-center justify-between">
                     <div className="flex flex-col gap-2">
@@ -176,7 +180,13 @@ export default function TicketPage() {
                     </div>
                     {view === "list" && (
                         <button
-                            onClick={() => setIsCreateModalOpen(true)}
+                            onClick={() => {
+                                if (user && !user.isBound) {
+                                    toast.error("请先绑定服务器角色后提交工单");
+                                    return;
+                                }
+                                setIsCreateModalOpen(true);
+                            }}
                             className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-xl shadow-lg shadow-slate-200 hover:bg-slate-800 transition-colors font-bold text-sm active:scale-95"
                         >
                             <Plus size={18} />

@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import Cookies from 'js-cookie';
-import { decryptData } from "@/utils/crypto";
+import { decryptData, encryptData } from "@/utils/crypto";
 
 // 定义 User 类型 (确保包含 cash/bank 等你需要显示的字段)
 interface User {
@@ -16,6 +16,7 @@ interface User {
     isAdmin?: boolean; // 新增：是否为管理员
     isSuperAdmin?: boolean; // 新增：是否为超级管理员
     permissions?: string[]; // 新增：管理员权限列表 ['store', 'users', 'banner', 'announcement']
+    status?: string; // status: 'active' | 'banned'
 }
 
 interface UserState {
@@ -39,8 +40,11 @@ export const useUserStore = create<UserState>((set, get) => ({
     playerCount: 0,
     login: (userData, token) => {
         Cookies.set('auth_token', token, { expires: 7 });
-        Cookies.set('user_info', JSON.stringify(userData), { expires: 7 });
-        set({ user: userData });
+        console.log("userData", userData);
+        // Encrypt data before saving to cookie, so checkLogin can decrypt it correctly
+        // const encryptedUser = encryptData(userData);
+        Cookies.set('user_info', userData, { expires: 7 });
+        set({ user: decryptData(userData) });
     },
 
     logout: () => {
@@ -53,8 +57,17 @@ export const useUserStore = create<UserState>((set, get) => ({
     checkLogin: () => {
         const userCookie = Cookies.get('user_info');
         const token = Cookies.get('auth_token');
+        console.log(userCookie);
         if (userCookie && token) {
-            set({ user: JSON.parse(userCookie) });
+            try {
+                set({ user: decryptData(userCookie) });
+            } catch (err) {
+                console.error("Failed to decrypt user cookie:", err);
+                // Cookie likely corrupted or in old format, clear it
+                Cookies.remove('user_info');
+                Cookies.remove('auth_token');
+                set({ user: null });
+            }
         }
     },
 
@@ -77,10 +90,17 @@ export const useUserStore = create<UserState>((set, get) => ({
                 // 解密后端返回的 data
                 const decryptedUser = decryptData(data.data);
                 console.log("解密后的用户信息:", decryptedUser);
+
+                if (decryptedUser.status === 'banned') {
+                    get().logout();
+                    window.location.replace("/");
+                    return;
+                }
+
                 // 更新 Zustand 状态
                 set({ user: decryptedUser });
-                // 同时更新 Cookie，保证刷新页面后也是最新的
-                Cookies.set('user_info', JSON.stringify(decryptedUser), { expires: 7 });
+                // 同时更新 Cookie，保证刷新页面后也是最新的 (加密存储)
+                Cookies.set('user_info', data.data, { expires: 7 });
             } else {
                 set({ user: null });
                 Cookies.remove('user_info');

@@ -152,7 +152,7 @@ export default function TicketManager() {
                                     onClick={() => openTicket(t.id)}
                                     className={`p-4 cursor-pointer transition-colors hover:bg-slate-50 ${selectedTicketId === t.id ? "bg-blue-50/50 border-l-4 border-blue-500" : "border-l-4 border-transparent"}`}
                                 >
-                                    <div className="flex justify-between items-start mb-1">
+                                    <div className="flex justify-between items-start mb-2">
                                         <h4 className={`font-medium text-sm line-clamp-1 ${selectedTicketId === t.id ? "text-blue-700" : "text-slate-800"}`}>{t.title}</h4>
                                         <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold whitespace-nowrap ${t.status === "open" ? "bg-green-100 text-green-600" :
                                             t.status === "replied" ? "bg-amber-100 text-amber-600" :
@@ -161,8 +161,24 @@ export default function TicketManager() {
                                             {t.status === "open" ? "待处理" : t.status === "replied" ? "已回复" : "已关闭"}
                                         </span>
                                     </div>
-                                    <div className="flex justify-between items-center text-xs text-slate-400 mt-2">
-                                        <span>User #{t.userId}</span>
+
+                                    {/* User Info Block */}
+                                    <div className="bg-slate-50/80 rounded-lg p-2 text-xs space-y-1.5 border border-slate-100">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-bold text-slate-700 truncate max-w-[120px]" title={t.userNickname}>{t.userNickname || "未知用户"}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-slate-500">
+                                            <span>📱 {t.userPhone || "-"}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${t.userSubscription && t.userSubscription !== "None" ? "bg-amber-50 text-amber-600 border border-amber-100 dark:border-amber-900/10" : "bg-slate-100 text-slate-400"}`}>
+                                                👑 {t.userSubscription && t.userSubscription !== "None" ? t.userSubscription : "无订阅"}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-end items-center text-[10px] text-slate-300 mt-2 px-1">
+                                        {/* <span>User ID: {t.userId}</span> */}
                                         <span>{t.createdAt}</span>
                                     </div>
                                 </div>

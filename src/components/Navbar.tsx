@@ -29,6 +29,7 @@ import {
 
 import toast from "react-hot-toast";
 import { useUserStore } from "@/store/userStore";
+import {encryptData} from "@/utils/crypto";
 
 // 定义 PWA 安装事件的类型接口 (解决 TS 报错)
 interface BeforeInstallPromptEvent extends Event {
@@ -87,12 +88,10 @@ export default function Navbar() {
 
         return () => clearInterval(interval);
     }, [setServerStatus]);
-    // 1. 初始化逻辑
     useEffect(() => {
         setIsMounted(true);
         checkLogin();
-        // 静默刷新数据
-        refreshUser();
+        // refreshUser() is already called in checkServerStatus which runs on mount
     }, []);
 
     // 2. 监听 PWA 安装事件
@@ -197,11 +196,11 @@ export default function Navbar() {
         try {
             // 注意：这里使用了 fallback 或者是你环境变量里的 API
             const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://192.168.1.5:8000/api";
-
+            const encrypted=encryptData({ userId: user.userId })
             const res = await fetch(`${apiUrl}/bind/get-code`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId: user.userId })
+                body: JSON.stringify({ data: encrypted })
             });
             const data = await res.json();
 
