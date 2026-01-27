@@ -33,8 +33,9 @@ interface UserState {
     playerCount: number;
 }
 
+import { siteConfig } from "@/config/site";
 // 请替换为你真实的 IP
-const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}`;
+const API_BASE_URL = siteConfig.api.baseUrl;
 
 export const useUserStore = create<UserState>((set, get) => ({
     user: null,

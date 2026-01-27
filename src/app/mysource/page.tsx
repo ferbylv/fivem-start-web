@@ -3,7 +3,7 @@
 "use client";
 
 import Navbar from "@/components/Navbar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
 import toast from "react-hot-toast";
@@ -70,6 +70,43 @@ const DEFAULT_ASSETS: UserAssetsData = {
 
 // 游戏服接口配置
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'}`;
+
+const TimeoutImage = ({ src, alt, className, fallbackSrc }: { src: string, alt: string, className?: string, fallbackSrc: string }) => {
+    const [currentSrc, setCurrentSrc] = useState(src);
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        setCurrentSrc(src);
+        if (timerRef.current) clearTimeout(timerRef.current);
+
+        timerRef.current = setTimeout(() => {
+            setCurrentSrc(fallbackSrc);
+        }, 1000);
+
+        return () => {
+            if (timerRef.current) clearTimeout(timerRef.current);
+        };
+    }, [src, fallbackSrc]);
+
+    const handleLoad = () => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+    };
+
+    const handleError = () => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+        setCurrentSrc(fallbackSrc);
+    };
+
+    return (
+        <img
+            src={currentSrc}
+            alt={alt}
+            className={className}
+            onLoad={handleLoad}
+            onError={handleError}
+        />
+    );
+};
 
 export default function MySourcePage() {
     const router = useRouter();
@@ -360,13 +397,11 @@ export default function MySourcePage() {
 
                                             {/* 图片 (保持宽高比，但因为容器小了，图也会自然变小) */}
                                             <div className="w-full aspect-square bg-gray-50/50 rounded-lg mb-2 flex items-center justify-center p-1.5 group-hover:bg-blue-50/30 transition-colors overflow-hidden">
-                                                <img
+                                                <TimeoutImage
                                                     src={item.image_url}
                                                     alt={item.name}
                                                     className="w-full h-full object-contain drop-shadow-sm mix-blend-multiply"
-                                                    onError={(e) => {
-                                                        (e.target as HTMLImageElement).src = "https://placehold.co/100x100?text=Item";
-                                                    }}
+                                                    fallbackSrc="https://placehold.co/100x100?text=Item"
                                                 />
                                             </div>
 

@@ -328,8 +328,9 @@ export default function AdminDashboard() {
     // 2. Check Permissions (Run when user state changes)
     useEffect(() => {
         if (!user) return; // Wait for user to be loaded
-
-        if (user.isAdmin !== true && user.isSuperAdmin !== true) {
+        console.log("!user.isAdmin && !user.isSuperAdmin",!user.isAdmin && !user.isSuperAdmin)
+        console.log("!user.isAdmin && !user.isSuperAdmin",user)
+        if (!user.isAdmin && !user.isSuperAdmin) {
             toast.error("您没有权限访问此页面");
             router.replace("/");
         }

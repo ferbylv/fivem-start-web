@@ -347,7 +347,10 @@ export default function HomePage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-2">
 
                     {/* Must Read */}
-                    <div className="bg-gray-50 border border-gray-100 rounded-[24px] p-6 flex items-center justify-between md:flex-col md:justify-center md:gap-4 shadow-sm hover:bg-blue-50 hover:border-blue-100 transition-all cursor-pointer group h-24 md:h-44">
+                    <div
+                        onClick={() => window.open(siteConfig.links.mustWatch, "_blank")}
+                        className="bg-gray-50 border border-gray-100 rounded-[24px] p-6 flex items-center justify-between md:flex-col md:justify-center md:gap-4 shadow-sm hover:bg-blue-50 hover:border-blue-100 transition-all cursor-pointer group h-24 md:h-44"
+                    >
                         <div className="flex items-center gap-4 md:flex-col md:gap-4">
                             <div className="p-3 bg-white rounded-2xl shadow-sm group-hover:scale-110 transition-transform text-blue-500">
                                 <BookOpen size={24} className="w-6 h-6 md:w-8 md:h-8" />
@@ -359,7 +362,10 @@ export default function HomePage() {
                     </div>
 
                     {/* Rules */}
-                    <div className="bg-gray-50 border border-gray-100 rounded-[24px] p-6 flex items-center justify-between md:flex-col md:justify-center md:gap-4 shadow-sm hover:bg-blue-50 hover:border-blue-100 transition-all cursor-pointer group h-24 md:h-44">
+                    <div
+                        onClick={() => window.open(siteConfig.links.rules, "_blank")}
+                        className="bg-gray-50 border border-gray-100 rounded-[24px] p-6 flex items-center justify-between md:flex-col md:justify-center md:gap-4 shadow-sm hover:bg-blue-50 hover:border-blue-100 transition-all cursor-pointer group h-24 md:h-44"
+                    >
                         <div className="flex items-center gap-4 md:flex-col md:gap-4">
                             <div className="p-3 bg-white rounded-2xl shadow-sm group-hover:scale-110 transition-transform text-purple-500">
                                 <ShieldAlert size={24} className="w-6 h-6 md:w-8 md:h-8" />

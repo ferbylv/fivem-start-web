@@ -8,12 +8,12 @@ import { useRouter } from "next/navigation"; // 1. 引入路由钩子
 import { useUserStore } from "@/store/userStore"; // 状态
 import { toast, Toaster } from "react-hot-toast";
 import { decryptData, encryptData } from "@/utils/crypto";
+import { siteConfig } from "@/config/site";
 // === 模拟模式开关 ===
 // 设置为 false 时，会真正去请求后端接口
 // 设置为 true 时，会模拟成功并返回假数据 (方便你现在测试)
 const MOCK_MODE = false;
 export default function LoginPage() {
-  const API_BASE_URL = "http://127.0.0.1:8000/api";
   const router = useRouter(); // 2. 初始化路由
   const { login } = useUserStore(); // 获取 store 的 login 方法
   // --- 状态定义 ---
@@ -82,7 +82,7 @@ export default function LoginPage() {
     console.log(`向手机号 ${phoneNumber} 发送验证码`);
     try {
       const encrypted = encryptData({ phone: phoneNumber });
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/send-code`, {
+      const res = await fetch(`${siteConfig.api.baseUrl}/send-code`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -175,7 +175,7 @@ export default function LoginPage() {
         };
       } else {
         // --- 真实接口调用 ---
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+        const res = await fetch(`${siteConfig.api.baseUrl}/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

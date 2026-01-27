@@ -200,7 +200,7 @@ export default function UserManager() {
                 <Search size={20} className="text-slate-400 ml-2" />
                 <input
                     type="text"
-                    placeholder="搜索手机号或昵称..."
+                    placeholder="搜索手机号、昵称或游戏名..."
                     className="flex-1 outline-none text-sm p-2 bg-transparent text-slate-800 placeholder:text-slate-400"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -213,10 +213,12 @@ export default function UserManager() {
                     <table className="w-full text-left text-sm">
                         <thead className="bg-slate-50 text-slate-500 border-b border-slate-200 font-medium">
                             <tr>
-                                <th className="px-6 py-4">ID</th>
+                                {/* <th className="px-6 py-4">ID</th> */}
                                 <th className="px-6 py-4">用户信息</th>
                                 <th className="px-6 py-4">权限</th>
                                 <th className="px-6 py-4">状态</th>
+                                <th className="px-6 py-4">游戏名</th>
+                                <th className="px-6 py-4">绑定状态</th>
                                 <th className="px-6 py-4">当前订阅</th>
                                 <th className="px-6 py-4">总消费</th>
                                 <th className="px-6 py-4">注册时间</th>
@@ -226,7 +228,7 @@ export default function UserManager() {
                         <tbody className="divide-y divide-slate-100">
                             {users.map(u => (
                                 <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
-                                    <td className="px-6 py-4 font-mono text-slate-400">#{u.id}</td>
+                                    {/* <td className="px-6 py-4 font-mono text-slate-400">#{u.id}</td> */}
                                     <td className="px-6 py-4">
                                         <div>
                                             <p className="font-bold text-slate-800">{u.nickname}</p>
@@ -255,6 +257,20 @@ export default function UserManager() {
                                             <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-100 text-red-600 rounded-full text-xs font-bold">
                                                 <Ban size={10} /> 封禁
                                             </span>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className="font-bold text-slate-700 text-sm">
+                                            {u.isBound ? (u.username || u.license || "-") : "-"}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {u.isBound ? (
+                                            <span className="inline-flex items-center px-1.5 py-0.5 bg-green-50 text-green-600 rounded text-[10px] font-medium border border-green-100">
+                                                已绑定
+                                            </span>
+                                        ) : (
+                                            <span className="text-slate-400 text-xs">未绑定</span>
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
